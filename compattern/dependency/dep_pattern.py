@@ -1,18 +1,12 @@
 from itertools import product
 
 
-class Slot(object):
-    def __init__(self, label, required=False):
-        self.label = label
-        self.required = required
-
-
 def _iter_pattern(pattern):
     bag = [pattern]
     while bag:
         curr_p = bag.pop()
         yield curr_p
-        form, pos, role, slot, kids = curr_p
+        kids = curr_p.get('kids', [])
         bag.extend([kid for kid in kids if kid])
 
 
@@ -28,8 +22,10 @@ def _iter_deptree(root):
 def _match(node, pattern):
     def _local_match():
         match = True
-        form, pos, role, _, _ = pattern
-        for query, data in zip([form, pos, role],
+        form = pattern.get('form')
+        pos = pattern.get('pos')
+        deprel = pattern.get('deprel')
+        for query, data in zip([form, pos, deprel],
                                [node.form, node.pos, node.deprel]):
             if query is not None:
                 if hasattr(query, '__call__'):  # callable matcher
@@ -46,27 +42,25 @@ def _match(node, pattern):
                 break
         return match
 
-    required_slots = [slot.label
-                      for _, _, _, slot, _ in _iter_pattern(pattern)
-                      if slot.required]
+    required_slots = [subpattern['slot']
+                      for subpattern in _iter_pattern(pattern)
+                      if not subpattern.get('optional', False)]
 
     kid_matches = []
     all_matches = []
 
     if _local_match():
-        _, _, _, slot, kids = pattern
-        for kid in kids:
+        slot = pattern.get('slot')
+        for kid in pattern.get('kids', []):
             this_kid_matches = [m for k in node.kids for m in _match(k, kid)]
             this_kid_matches = filter(lambda x: x is not None,
                                       this_kid_matches)
-            _, _, _, kid_slot, _ = kid
-            if this_kid_matches or (hasattr(kid_slot, 'required') and
-                                    kid_slot.required):
+            if this_kid_matches or not kid.get('optional', False):
                                     # uglyish; means: don't append optional
                                     # slots
                 kid_matches.append(this_kid_matches)
         for assignment in product(*kid_matches):
-            d = {slot.label: node}
+            d = {slot: node}
             for kid_match in assignment:
                 d.update(kid_match)
             if len(d) != len(set([item.id for item in d.values()])):
