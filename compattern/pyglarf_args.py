@@ -31,8 +31,8 @@ def find_comparison_nodes(tree):
             for arg_tree in arg_trees:
                 if _safe_filter_comparator(_safe_head(arg_tree[0])):
                     comparison_nodes.append((rel, arg_tree))
-                if _safe_filter_as_unary(arg_tree):
-                    comparison_nodes.append((rel, arg_tree))
+                #if _safe_filter_as_unary(arg_tree):
+                #    comparison_nodes.append((rel, arg_tree))
         for _, _, arg_tree in rel.advs.values():
             if _safe_filter_comparator(_safe_head(arg_tree)):
                 comparison_nodes.append((rel, arg_tree))
