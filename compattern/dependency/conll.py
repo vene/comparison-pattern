@@ -149,6 +149,10 @@ def read(f, return_tree=False):
             lis = l.rstrip().split(' ')
         if len(lis) == 0:
             continue
+        elif len(lis) == 6:
+            # WaCkY format
+            s.add(init_token([lis[3], lis[0], lis[1], lis[2], lis[2], "_",
+                              lis[4], lis[5]], False))
         elif len(lis) == 8:
             s.add(init_token(lis, False))
         elif len(lis) == 10:
