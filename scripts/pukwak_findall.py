@@ -34,15 +34,16 @@ if __name__ == '__main__':
                      for k in (1, 2, 3, 4, 5)])
     all_matches = []
     for nr, text in enumerate(corpus):
+        text_l = "\n".join(text).lower()
+        if not (text_l.startswith("like\t") or text_l.startswith("as\t") or
+                "\nlike\t" in text_l or "\nas\t" in text_l):
+            continue
+        del text_l
         if nr % 100:
             sys.stdout.write(".")
             sys.flush()
         text = [k for sent in text for k in sent.split("\n")]
         text = filter(len, text)
-        text_l = text.lower()
-        if not (text_l.startswith("like\t") or text_l.startswith("as\t") or
-                "\tlike\t" in text_l or "\tas\t" in text_l):
-            continue
         try:
             for sent, root in read(text, return_tree=True):
                 matches = [m for pat in patterns for m in match(root, pat)]
