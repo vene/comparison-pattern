@@ -1,6 +1,7 @@
 #from __future__ import print_function
 
 import cPickle
+import sys
 from compattern.dependency import match
 from compattern.dependency.seed_patterns import patterns
 
@@ -29,11 +30,19 @@ class PUkWaC(object):
 if __name__ == '__main__':
     from compattern.dependency.conll import read
 
-    corpus = PUkWaC(["/Users/vene/code/read_wacky/toywac.xml"])
+    corpus = PUkWaC(["/home/vniculae/corpora/pukwac/ukwac{}.xml".format(k)
+                     for k in (1, 2, 3, 4, 5)])
     all_matches = []
-    for text in corpus:
+    for nr, text in enumerate(corpus):
+        if nr % 100:
+            sys.stdout.write(".")
+            sys.flush()
         text = [k for sent in text for k in sent.split("\n")]
         text = filter(len, text)
+        text_l = text.lower()
+        if not (text_l.startswith("like\t") or text_l.startswith("as\t") or
+                "\tlike\t" in text_l or "\tas\t" in text_l):
+            continue
         try:
             for sent, root in read(text, return_tree=True):
                 matches = [m for pat in patterns for m in match(root, pat)]
