@@ -39,12 +39,13 @@ for ii, (sent, ctx, gf, gt, dep) in enumerate(zip(sents, ctxs, gfs, gts,
         tree = GlarfTree.glarf_parse(gf, gt)
         args = [get_args(*node) for node in find_comparison_nodes(tree)]
         args = [arg_dict for arg_dict in args
-                if arg_dict['C'].lower() == sys.argv[1]]
+                if arg_dict['C'].lower() == sys.argv[1]
+                and 'V' in arg_dict and arg_dict['V'].strip() != ""]
     except ValueError:
         args = []
         continue
 
-    dep_args = [m for pat in patterns for m in match(dep, pat)
+    dep_args = [m for pat in patterns[:2] for m in match(dep, pat)
                 if m['C'].form.lower() == sys.argv[1]]
 
     if args:
