@@ -8,7 +8,7 @@ like = dict(slot="E",
                                 deprel='PMOD')
                            ]),
                 dict(slot="T",
-                     deprel='SUB',
+                     deprel=lambda dep: dep in ['SUB', 'SBJ'],
                      optional=True),
                 dict(slot='P',
                      optional=True,
@@ -30,14 +30,15 @@ like_tr = dict(slot='_E',
                         ]),
                    dict(slot='T',
                         optional=True,
-                        deprel='SUB')
+                        deprel=lambda dep: dep in ['SUB', 'SBJ'])
                ])
 
 as_1 = dict(slot='E',
             pos=lambda pos: pos.startswith('VB'),
             kids=[
                 dict(slot='T',
-                     deprel='SUB', optional=True),
+                     deprel=lambda dep: dep in ['SUB', 'SBJ'],
+                     optional=True),
                 dict(slot='P',
                      deprel='PRD',
                      kids=[
@@ -53,7 +54,8 @@ as_2 = dict(slot='E',
             pos=lambda pos: pos.startswith('VB'),
             kids=[
                 dict(slot='T',
-                     deprel='SUB', optional=True),
+                     deprel=lambda dep: dep in ['SUB', 'SBJ'],
+                     optional=True),
                 dict(slot='_C',
                      form='as', pos='IN', deprel='VMOD',
                      kids=[dict(slot='P')]),
@@ -67,7 +69,8 @@ as_3 = dict(slot='E',
             pos=lambda pos: pos.startswith('VB'),
             kids=[
                 dict(slot='T',
-                     deprel='SUB', optional=True),
+                     deprel=lambda dep: dep in ['SUB', 'SBJ'],
+                     optional=True),
                 dict(slot='_C',
                      form='as', pos='RB', deprel='VMOD',
                      kids=[
