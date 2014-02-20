@@ -1,3 +1,5 @@
+"""Code for comparison matching evaluation from my JSSP 2013 paper"""
+
 import sys
 
 PATH = '/Users/vene/bnc/similes/{}/'.format(sys.argv[1])
