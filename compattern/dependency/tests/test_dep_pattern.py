@@ -24,8 +24,55 @@ example_like = \
      '\n']
 
 
+example_rbr = \
+    ['in\tin\tIN\t1\t4\tAMOD',
+     'reality\treality\tNN\t2\t1\tPMOD',
+     'more\tmore\tRBR\t3\t4\tAMOD',
+     'often\toften\tRB\t4\t8\tADV',
+     'than\tthan\tIN\t5\t4\tAMOD',
+     'not\tnot\tRB\t6\t5\tPMOD',
+     'they\tthey\tPP\t7\t8\tSBJ',
+     'should\tshould\tMD\t8\t0\tROOT',
+     'have\thave\tVH\t9\t8\tVC',
+     'left\tleave\tVVN\t10\t9\tVC',
+     'it\tit\tPP\t11\t13\tSBJ',
+     'the\tthe\tDT\t12\t13\tNMOD',
+     'way\tway\tNN\t13\t10\tOBJ',
+     'it\tit\tPP\t14\t15\tSBJ',
+     'was\tbe\tVBD\t15\t13\tNMOD',
+     '\n']
+
+
+example_jjr = \
+    ['That\tthat\tDT\t1\t2\tSBJ',
+     "'s\tbe\tVBZ\t2\t0\tROOT",
+     'better\tgood\tJJR\t3\t2\tPRD',
+     'than\tthan\tIN\t4\t3\tAMOD',
+     'opening\topen\tVVG\t5\t4\tPMOD',
+     'up\tup\tRP\t6\t5\tPRT',
+     'a\ta\tDT\t7\t9\tNMOD',
+     'huge\thuge\tJJ\t8\t9\tNMOD',
+     'range\trange\tNN\t9\t5\tOBJ',
+     'of\tof\tIN\t10\t9\tNMOD',
+     'ports\tport\tNNS\t11\t10\tPMOD',
+     '.\t.\tSENT\t12\t2\tP',
+     '\n']
+
+
 def test_like():
     sent, root = read(example_like, return_tree=True)[0]
     matches = match(root, seed_patterns.like)
     assert_greater(len(matches), 0)
     assert_in('T', matches[0].keys())
+
+
+def test_than():
+    sent, root = read(example_rbr, return_tree=True)[0]
+    matches = match(root, seed_patterns.than_2)
+    assert_greater(len(matches), 0)
+
+
+def test_jjr():
+    sent, root = read(example_jjr, return_tree=True)[0]
+    matches = match(root, seed_patterns.than_1)
+    assert_greater(len(matches), 0)
