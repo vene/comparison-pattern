@@ -22,6 +22,8 @@ import time
 import mmap
 import os
 import cPickle
+import argparse
+
 from sklearn.externals.joblib import Parallel, delayed
 
 import numpy as np
@@ -167,18 +169,26 @@ def process(fname, chunk, fmt='turboparser'):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print("Usage: {} infile.conll outfile.pkl [turboparser|wacky]"
-              .format(sys.argv[0]))
-        sys.exit(1)
-    f = sys.argv[1]
-    fmt = sys.argv.get(3, 'turboparser')
+    parser = argparse.ArgumentParser(
+        description="Fast comparison pattern matcher from CoNLL files")
+    parser.add_argument('infile', type=str, help="input file")
+    parser.add_argument('outfile', type=argparse.FileType('w'),
+                        help="output file (pickle format)")
+    parser.add_argument('--format', type=str,
+                        help="turboparser (default)|wacky")
+    args = parser.parse_args()
+
+    fmt = args.format if args.format else 'turboparser'
+    if fmt not in ['turboparser', 'wacky']:
+        raise argparse.ArgumentError('format should be turboparser or wacky')
     delim = '<s>' if fmt == 'wacky' else ''
     print("Processing {}".format(sys.argv[1]))
     t0 = time.time()
-    matches = Parallel(n_jobs=32, verbose=1)(delayed(process)(f, chunk, fmt)
+    matches = Parallel(n_jobs=32, verbose=1)(delayed(process)(args.infile,
+                                                              chunk, fmt)
                                              for chunk
-                                             in get_chunks(f, delim=delim))
+                                             in get_chunks(args.infile,
+                                                           delim=delim))
     print("{} sentences matched".format(sum(len(m) for m in matches)))
     print("Completed in {:.2f}".format(time.time() - t0))
-    cPickle.dump(matches, open(sys.argv[2], "w", -1))
+    cPickle.dump(matches, args.outfile)
