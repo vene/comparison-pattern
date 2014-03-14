@@ -10,16 +10,21 @@ def _iter_pattern(pattern):
         bag.extend([kid for kid in kids if kid])
 
 
-def _iter_deptree(root):
+def _iter_deptree(root, limit=9999):
     bag = [root]
+    seen = 1
     while bag:
+        if seen > limit:
+            raise ValueError('Dependency tree is either larger than the limit '
+                             'or contains loops.')
+        seen += 1
         curr_token = bag.pop()
         yield curr_token
         if hasattr(curr_token, 'kids'):
             bag.extend(curr_token.kids)
 
 
-def _match(node, pattern):
+def _match(node, pattern, limit=9999):
     def _local_match():
         match = True
         form = pattern.get('form')
@@ -59,7 +64,10 @@ def _match(node, pattern):
                                     # slots
                 kid_matches.append(this_kid_matches)
 
-        for assignment in product(*kid_matches):
+        for n_assignment, assignment in enumerate(product(*kid_matches)):
+            if n_assignment > limit:
+                raise ValueError("Number of possible submatches exceeds "
+                                 "the default limit.")
             incompatible_duplicate = False
             d = {slot: node}
             for kid_match in assignment:
