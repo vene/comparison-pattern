@@ -23,6 +23,26 @@ example_like = \
      '.\t.\tSENT\t15\t1\tP\n',
      '\n']
 
+# Kind of hand modified
+example_like_t1 = \
+    ['A\ta\tDT\t1\t3\tNMOD',
+     'configuration\tconfiguration\tNN\t2\t3\tNMOD',
+     'file\tfile\tNN\t3\t4\tSBJ',
+     'could\tcould\tMD\t4\t0\tROOT',
+     'look\tlook\tVV\t5\t4\tVC',
+     'like\tlike\tIN\t6\t5\tADV',
+     'this\tthis\tDT\t7\t6\tPMOD',
+     '\n']
+
+example_like_t2 = \
+    ['A\ta\tDT\t1\t3\tNMOD',
+     'configuration\tconfiguration\tNN\t2\t3\tNMOD',
+     'file\tfile\tNN\t3\t4\tSBJ',
+     'could\tcould\tMD\t4\t0\tROOT',
+     'look\tlook\tVV\t5\t4\tVC',
+     'like\tlike\tIN\t6\t4\tADV',
+     'this\tthis\tDT\t7\t6\tPMOD',
+     '\n']
 
 example_rbr = \
     ['in\tin\tIN\t1\t4\tAMOD',
@@ -64,6 +84,18 @@ def test_like():
     matches = match(root, seed_patterns.like)
     assert_greater(len(matches), 0)
     assert_in('T', matches[0].keys())
+
+
+def test_like_t1():
+    sent, root = read(example_like_t1, return_tree=True)[0]
+    matches = match(root, seed_patterns.like_t1)
+    assert_greater(len(matches), 0)
+
+
+def test_like_t2():
+    sent, root = read(example_like_t2, return_tree=True)[0]
+    matches = match(root, seed_patterns.like_t2)
+    assert_greater(len(matches), 0)
 
 
 def test_than():

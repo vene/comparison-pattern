@@ -1,6 +1,8 @@
 # common lambdas:
 is_verb = lambda pos: pos.startswith('V')
+is_verb_or_md = lambda pos: pos.startswith('V') or pos == 'MD'
 is_subject = lambda dep: dep in ['SUB', 'SBJ']
+simple_property = lambda pos: pos in ['JJ', 'RB', 'RBR', 'VVN']
 
 like = dict(slot="E",
             pos=is_verb,
@@ -37,8 +39,7 @@ like_t1 = dict(slot='_E',
                         deprel=is_subject)
                ])
 
-
-# transparent like 1: he may <- be <- dead
+# transparent like 2: he may <- be <- dead
 like_t2 = dict(slot='_E',
                pos='MD',
                kids=[
@@ -54,7 +55,6 @@ like_t2 = dict(slot='_E',
                         deprel=is_subject)
                ])
 
-
 as_1 = dict(slot='E',
             pos=is_verb,
             kids=[
@@ -62,6 +62,7 @@ as_1 = dict(slot='E',
                      deprel=is_subject,
                      optional=True),
                 dict(slot='P',
+                     pos=simple_property,
                      deprel='PRD',
                      kids=[
                          dict(slot='_C',
@@ -80,12 +81,12 @@ as_2 = dict(slot='E',
                      optional=True),
                 dict(slot='_C',
                      form='as', pos='IN', deprel='VMOD',
-                     kids=[dict(slot='P')]),
+                     kids=[dict(slot='P',
+                                pos=simple_property)]),
                 dict(slot='C',
                      form='as', pos='IN', deprel='VMOD',
                      kids=[dict(slot='V')])
             ])
-
 
 as_3 = dict(slot='E',
             pos=is_verb,
@@ -97,6 +98,7 @@ as_3 = dict(slot='E',
                      form='as', pos='RB', deprel='VMOD',
                      kids=[
                          dict(slot='P',
+                              pos=simple_property,
                               deprel='AMOD'),
                          dict(slot='C',
                               form='as', pos='IN', deprel='AMOD',
@@ -104,10 +106,10 @@ as_3 = dict(slot='E',
                      ])
             ])
 
-
 # that's better than opening ...
+# TODO: transparency is imperfectly handled in these two.
 than_1 = dict(slot='E',
-              pos=is_verb,
+              pos=is_verb_or_md,
               kids=[
                   dict(slot='T',
                        deprel=is_subject,
@@ -120,11 +122,10 @@ than_1 = dict(slot='E',
                                   kids=[dict(slot='V')])])
               ])
 
-
 # that's more advanced than ...
 # could be too general
 than_2 = dict(slot='E',
-              pos=is_verb,
+              pos=is_verb_or_md,
               kids=[
                   dict(slot='T',
                        deprel=is_subject,
