@@ -79,6 +79,42 @@ example_jjr = \
      '\n']
 
 
+example_as = \
+    ['Scenically\tscenically\tRB\t1\t4\tADV',
+     ',\t,\t,\t2\t4\tP',
+     'it\tit\tPP\t3\t4\tSBJ',
+     "'s\tbe\tVBZ\t4\t0\tROOT",
+     'not\tnot\tRB\t5\t4\tVMOD',
+     'as\tas\tIN\t6\t8\tVMOD',
+     'immediately\timmediately\tRB\t7\t8\tADV',
+     'appealing\tappeal\tVVG\t8\t4\tVC',
+     'as\tas\tIN\t9\t8\tADV',
+     'some\tsome\tDT\t10\t9\tPMOD',
+     'of\tof\tIN\t11\t10\tNMOD',
+     'the\tthe\tDT\t12\t14\tNMOD',
+     'other\tother\tJJ\t13\t14\tNMOD',
+     'islands\tisland\tNNS\t14\t11\tPMOD',
+     '-\t-\t:\t15\t10\tP',
+     'as\tas\tIN\t16\t19\tVMOD',
+     'the\tthe\tDT\t17\t18\tNMOD',
+     'plane\tplane\tNN\t18\t19\tSBJ',
+     'comes\tcome\tVVZ\t19\t8\tADV',
+     'in\tin\tIN\t20\t19\tADV',
+     'to\tto\tTO\t21\t22\tVMOD',
+     'land\tland\tVV\t22\t19\tADV',
+     'the\tthe\tDT\t23\t24\tNMOD',
+     'interior\tinterior\tNN\t24\t22\tOBJ',
+     'looks\tlook\tVVZ\t25\t19\tCOORD',
+     'quite\tquite\tRB\t26\t27\tAMOD',
+     'flat\tflat\tJJ\t27\t25\tPRD',
+     ',\t,\t,\t28\t27\tP',
+     'dry\tdry\tJJ\t29\t27\tCOORD',
+     'and\tand\tCC\t30\t27\tCC',
+     'parched\tparched\tJJ\t31\t27\tCOORD',
+     '.\t.\tSENT\t32\t4\tP',
+     '\n']
+
+
 def test_like():
     sent, root = read(example_like, return_tree=True)[0]
     matches = match(root, seed_patterns.like)
@@ -107,4 +143,10 @@ def test_than():
 def test_jjr():
     sent, root = read(example_jjr, return_tree=True)[0]
     matches = match(root, seed_patterns.than_1)
+    assert_greater(len(matches), 0)
+
+
+def test_as():
+    sent, root = read(example_as, return_tree=True)[0]
+    matches = match(root, seed_patterns.as_1)
     assert_greater(len(matches), 0)
