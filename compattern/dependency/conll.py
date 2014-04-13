@@ -1,30 +1,33 @@
 """
 CoNLL reader
 
-Factored out from the project conllx-to-tikz-dep
+Factored out from the project conllx-to-tikz-dep, and then modified a bit.
 https://github.com/tetsuok/conllx-to-tikz-dep
 """
 
 # Author: Tetsuo Kiso <tetsuo-s@is.naist.jp>
+# Author: Vlad Niculae <vniculae@mpi-sws.org>
 # License: New BSD
 
+import warnings
 
 matrix_separator = '\^'
 special_chars = ['{', '}', '$', '&', '%']
 
 
 class Token(object):
-    def __init__(self):
-        self.id = None
-        self.form = None
-        self.lemma = None
-        self.cpos = None
-        self.pos = None
-        self.feat = None
-        self.head = None
-        self.deprel = None
-        self.phead = None
-        self.pdeprel = None
+    def __init__(self, token_id, form, lemma=None, pos=None, cpos=None,
+                 feat=None, head=None, deprel=None, phead=None, pdeprel=None):
+        self.id = token_id
+        self.form = form
+        self.lemma = lemma
+        self.cpos = cpos if cpos is not None else pos
+        self.pos = pos
+        self.feat = feat
+        self.head = head
+        self.deprel = deprel
+        self.phead = phead
+        self.pdeprel = pdeprel
 
     def is_root(self):
         return self.head == 0 or self.head == -1
@@ -36,10 +39,8 @@ class Token(object):
 
 
 class Sentence(object):
-
     def __init__(self):
         self.tokens = []
-        self.length = 0
 
     def __getitem__(self, i):
         return self.tokens[i]
@@ -49,10 +50,16 @@ class Sentence(object):
 
     def add(self, t):
         self.tokens.append(t)
-        self.length += 1
 
+    @property
     def length(self):
-        return self.length
+        warnings.warn("The `length` attribute of sentence objects has been "
+                      "deprecated. Please use `len(sentence)` instead.",
+                      DeprecationWarning, stacklevel=2)
+        return len(self)
+
+    def __len__(self):
+        return len(self.tokens)
 
     def __str__(self):
         return ' '.join([v.form for v in self.tokens])
@@ -151,12 +158,34 @@ def read(f, return_tree=False):
             continue
         elif len(lis) == 6:
             # WaCkY format
-            s.add(init_token([lis[3], lis[0], lis[1], lis[2], lis[2], "_",
-                              lis[4], lis[5]], False))
+            #s.add(init_token([lis[3], lis[0], lis[1], lis[2], lis[2], "_",
+            #                  lis[4], lis[5]], False))
+            form, lemma, pos, token_id, head, deprel = lis
+            s.add(Token(token_id=int(token_id), form=replace_special(form),
+                        lemma=lemma, pos=pos, head=int(head), deprel=deprel))
         elif len(lis) == 8:
-            s.add(init_token(lis, False))
+            #s.add(init_token(lis, False))
+            token_id, form, lemma, cpos, pos, feat, head, deprel = lis
+            s.add(Token(token_id=int(token_id), form=replace_special(form),
+                        lemma=lemma, cpos=cpos, pos=pos, feat=feat,
+                        head=int(head), deprel=deprel))
         elif len(lis) == 10:
-            s.add(init_token(lis))
+            token_id, form, lemma, cpos, pos, feat, hd, dep, phd, pdep = lis
+            s.add(Token(token_id=int(token_id), form=replace_special(form),
+                        lemma=lemma, cpos=cpos, pos=pos, feat=feat,
+                        head=int(hd), deprel=dep, phead=int(phd),
+                        pdeprel=pdep))
+            #s.add(init_token(lis))
+        elif len(lis) == 11:
+            # French MaltParser
+            (token_id, form, lemma, cpos, pos, feat, cluster, head, deprel,
+             phead, pdeprel) = lis
+            s.add(Token(token_id=int(token_id), form=form, lemma=lemma,
+                        cpos=cpos, pos=pos, feat=(feat, cluster),
+                        head=int(head), deprel=deprel,
+                        phead=int(phead) if phead != '_' else None,
+                        pdeprel=pdeprel if pdeprel != '_' else None))
         else:
-            raise ValueError('Data format is broken!')
+            raise ValueError('Data format is not supported. Try hacking'
+                             '`compattern.dependency.conll.read`.')
     return sents
