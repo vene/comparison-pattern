@@ -28,10 +28,13 @@ def _match(node, pattern, limit=9999):
     def _local_match():
         match = True
         form = pattern.get('form')
+        lemma = pattern.get('lemma')
         pos = pattern.get('pos')
+        cpos = pattern.get('cpos')
         deprel = pattern.get('deprel')
-        for query, data in zip([form, pos, deprel],
-                               [node.form, node.pos, node.deprel]):
+        for query, data in zip([form, lemma, pos, cpos, deprel],
+                               [node.form, node.lemma, node.pos, node.cpos,
+                                node.deprel]):
             if query is not None:
                 if hasattr(query, '__call__'):  # callable matcher
                     match = query(data)
