@@ -60,8 +60,7 @@ def _match(node, pattern, limit=9999):
         slot = pattern.get('slot')
         for kid in pattern.get('kids', []):
             this_kid_matches = [m for k in node.kids for m in _match(k, kid)]
-            this_kid_matches = filter(lambda x: x is not None,
-                                      this_kid_matches)
+            this_kid_matches = [x for x in this_kid_matches if x is not None]
             if this_kid_matches or not kid.get('optional', False):
                                     # uglyish; means: don't append optional
                                     # slots
@@ -74,9 +73,9 @@ def _match(node, pattern, limit=9999):
             incompatible_duplicate = False
             d = {slot: node}
             for kid_match in assignment:
-                for label, matched_tok in kid_match.items():
+                for label, matched_tok in list(kid_match.items()):
                     add_it = True
-                    for other_label, other_tok in d.items():
+                    for other_label, other_tok in list(d.items()):
                         if matched_tok == other_tok:
                             if other_label in required_slots:
                                 if label in required_slots:
@@ -93,7 +92,7 @@ def _match(node, pattern, limit=9999):
             #if len(d) != len(set([item.id for item in d.values()])):
             #    # A node was matched twice and this is not cool
             #    continue
-            if all(slot in d.keys() for slot in required_slots):
+            if all(slot in list(d.keys()) for slot in required_slots):
                 all_matches.append(d)
     return all_matches
 

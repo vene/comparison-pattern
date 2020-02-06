@@ -21,7 +21,7 @@ import sys
 import time
 import mmap
 import os
-import cPickle
+import pickle
 import argparse
 
 from sklearn.externals.joblib import Parallel, delayed
@@ -88,8 +88,8 @@ def get_chunks(fname, block_size=2 ** 20, delim="<s>"):
 
 def _nested(submatch, match):
     """Check whether submatch is nested in match"""
-    ids_submatch = set((key, tok.id) for key, tok in submatch.items())
-    id_match = set((key, tok.id) for key, tok in match.items())
+    ids_submatch = set((key, tok.id) for key, tok in list(submatch.items()))
+    id_match = set((key, tok.id) for key, tok in list(match.items()))
     return set.issubset(ids_submatch, id_match)
 
 
@@ -182,13 +182,13 @@ if __name__ == '__main__':
     if fmt not in ['turboparser', 'wacky']:
         raise argparse.ArgumentError('format should be turboparser or wacky')
     delim = '<s>' if fmt == 'wacky' else ''
-    print("Processing {}".format(sys.argv[1]))
+    print(("Processing {}".format(sys.argv[1])))
     t0 = time.time()
     matches = Parallel(n_jobs=32, verbose=1)(delayed(process)(args.infile,
                                                               chunk, fmt)
                                              for chunk
                                              in get_chunks(args.infile,
                                                            delim=delim))
-    print("{} sentences matched".format(sum(len(m) for m in matches)))
-    print("Completed in {:.2f}".format(time.time() - t0))
-    cPickle.dump(matches, args.outfile)
+    print(("{} sentences matched".format(sum(len(m) for m in matches))))
+    print(("Completed in {:.2f}".format(time.time() - t0)))
+    pickle.dump(matches, args.outfile)

@@ -5,7 +5,7 @@ from compattern.dependency.conll import read
 from compattern.dependency import match
 from compattern.dependency.fr_patterns import aussi
 
-ex_aussi = u"""\
+ex_aussi = """\
 1   Au  à   P+D P+D s=def   1111111 0   root    _   _
 2   XIe XIe A   ADJ s=ord   _   3   mod _   _
 3   siècle  siècle  N   NC  g=m|n=s|s=c 0101001 1   obj _   _

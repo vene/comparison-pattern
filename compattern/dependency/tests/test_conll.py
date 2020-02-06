@@ -5,8 +5,8 @@ from compattern.dependency import conll
 
 def test_read_french():
     """Test that conll.read understands French Bonsai output"""
-    line = (u"6\tchauffé\tchauffer\tV\tVPP\tg=m|m=part|n=s|t=past\t"
-            u"1100011\t5\tdep_coord\t_\t_")
+    line = ("6\tchauffé\tchauffer\tV\tVPP\tg=m|m=part|n=s|t=past\t"
+            "1100011\t5\tdep_coord\t_\t_")
     sentence = conll.read([line, '\n'])[0]
     assert len(sentence) == 1
     token = sentence[0]

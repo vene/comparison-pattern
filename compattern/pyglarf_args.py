@@ -18,7 +18,7 @@ def _safe_head(node):
 
 
 def _get_sbj(rel):
-    for role_a, role_b, _, arg_tree in rel.args.values():
+    for role_a, role_b, _, arg_tree in list(rel.args.values()):
         if (any('SBJ' in role for role in role_a) or 'SBJ' in role_b) and (
                 arg_tree is not None):
             return arg_tree
@@ -27,13 +27,13 @@ def _get_sbj(rel):
 def find_comparison_nodes(tree):
     comparison_nodes = []
     for rel in tree.rels():
-        for _, _, _, arg_trees in rel.args.values():
+        for _, _, _, arg_trees in list(rel.args.values()):
             for arg_tree in arg_trees:
                 if _safe_filter_comparator(_safe_head(arg_tree[0])):
                     comparison_nodes.append((rel, arg_tree))
                 #if _safe_filter_as_unary(arg_tree):
                 #    comparison_nodes.append((rel, arg_tree))
-        for _, _, arg_tree in rel.advs.values():
+        for _, _, arg_tree in list(rel.advs.values()):
             if _safe_filter_comparator(_safe_head(arg_tree)):
                 comparison_nodes.append((rel, arg_tree))
             if _safe_filter_as_unary(arg_tree):
