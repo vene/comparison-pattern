@@ -17,6 +17,11 @@ setup(
     name='comparison_pattern',
     description='Scripts for mining comparison patterns from text',
     version=compattern.__version__,
+    packages=[
+    	'compattern',
+    	'compattern.dependency',
+    	'compattern.resources',
+    ],
     author='Vlad Niculae',
     author_email='vlad@vene.ro',
     classifiers=[_f for _f in CLASSIFIERS.split('\n') if _f]
