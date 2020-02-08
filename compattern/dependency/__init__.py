@@ -1,1 +1,1 @@
-from dep_pattern import match
+from .dep_pattern import match

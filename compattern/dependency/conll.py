@@ -121,7 +121,7 @@ def init_token(lis, is_conllx=True):
 
 def conll_sent_to_tree(sent):
     """Reverses the bottom-up representation to produce a root-centred tree"""
-    reverse_deps = [[] for _ in xrange(len(sent.tokens))]
+    reverse_deps = [[] for _ in range(len(sent.tokens))]
     for fro, to in sent.iterate_edges():
         reverse_deps[to - 1].append(fro - 1)
     root = None

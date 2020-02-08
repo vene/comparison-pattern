@@ -20,7 +20,7 @@ for f in glob(PATH + '*.yaml'):
     f = open(f, encoding='utf-8')
     examples.extend(load(f))
 
-sents, ctxs, gfs, gts = zip(*examples)
+sents, ctxs, gfs, gts = list(zip(*examples))
 f = None
 only_glarf = open("bnc_similes/{}/only_glarf.txt".format(sys.argv[1]), "w",
                   encoding="utf-8")
@@ -32,7 +32,7 @@ for ii, (sent, ctx, gf, gt, dep) in enumerate(zip(sents, ctxs, gfs, gts,
                                                   dep_parse)):
     dep = dep[1]
     if ii % 20 == 0:
-        print '.'
+        print('.')
         if f:
             f.close()
         f = open('bnc_similes/{}/{:03d}.txt'.format(sys.argv[1], ii / 20), 'w',
@@ -62,22 +62,22 @@ for ii, (sent, ctx, gf, gt, dep) in enumerate(zip(sents, ctxs, gfs, gts,
         print_to.append(only_dep)
 
     for dest in print_to:
-        print >> dest, sent
-        print >> dest
-        print >> dest, "Glarf:"
+        print(sent, file=dest)
+        print(file=dest)
+        print("Glarf:", file=dest)
         for arg in args:
-            print >> dest, "T: {T}\nE: {E}\nP: {P}\nC: {C}\nV: {V}\n".format(
-                **arg)
-        print >> dest, "\nDep:"
+            print("T: {T}\nE: {E}\nP: {P}\nC: {C}\nV: {V}\n".format(
+                **arg), file=dest)
+        print("\nDep:", file=dest)
         for arg in dep_args:
-            arg = {key: unicode(val.form, errors="ignore")
-                   for key, val in arg.iteritems()}
+            arg = {key: str(val.form, errors="ignore")
+                   for key, val in arg.items()}
             for K in 'TEPCV':
                 if K not in arg:
                     arg[K] = '--'
-            print >> dest, "T: {T}\nE: {E}\nP: {P}\nC: {C}\nV: {V}\n".format(
-                **arg)
-        print >> dest, "==="
+            print("T: {T}\nE: {E}\nP: {P}\nC: {C}\nV: {V}\n".format(
+                **arg), file=dest)
+        print("===", file=dest)
 
-print matches
-print dep_matches
+print(matches)
+print(dep_matches)

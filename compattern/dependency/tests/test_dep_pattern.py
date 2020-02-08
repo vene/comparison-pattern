@@ -119,7 +119,7 @@ def test_like():
     sent, root = read(example_like, return_tree=True)[0]
     matches = match(root, seed_patterns.like)
     assert_greater(len(matches), 0)
-    assert_in('T', matches[0].keys())
+    assert_in('T', list(matches[0].keys()))
 
 
 def test_like_t1():

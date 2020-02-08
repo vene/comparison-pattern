@@ -1,6 +1,6 @@
 # Query Thesaurus X
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from xml.etree import cElementTree as ET
 
 THEREX = "http://ngrams.ucd.ie/therex2/"
@@ -9,7 +9,7 @@ THEREX_POETIC = THEREX + "common-nouns/poetic.action?member={}&xml=true"
 
 
 def shared_category(a, b, derived=True):
-    res = urllib2.urlopen(THEREX_SHARED.format(a, b))
+    res = urllib.request.urlopen(THEREX_SHARED.format(a, b))
     root = ET.parse(res)
     members = [(member.text.strip(), int(member.get('weight')))
                for member in root.find('Members')]
@@ -22,7 +22,7 @@ def shared_category(a, b, derived=True):
 
 
 def poetic_properties(a):
-    res = urllib2.urlopen(THEREX_POETIC.format(a))
+    res = urllib.request.urlopen(THEREX_POETIC.format(a))
     members = [(member.text.strip(), int(member.get('weight')))
                for member in ET.parse(res).find('PoeticQualities')]
     members.sort(key=lambda x: x[1], reverse=True)
